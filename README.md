@@ -1,5 +1,7 @@
 # LunchFlowPy
 
+> **Unofficial SDK:** This package is not created, maintained, endorsed, or supported by Lunch Flow. It is a community Python SDK for accessing the public Lunch Flow API.
+
 Typed Python SDK for the [Lunch Flow API](https://www.lunchflow.app/docs/what-is-lunch-flow).
 
 ## Installation
