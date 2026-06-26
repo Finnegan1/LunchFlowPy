@@ -35,6 +35,8 @@ transactions = client.get_transactions(
     from_date="2026-01-01",
     to_date="2026-01-31",
 )
+
+transactions_df = transactions.to_dataframe()
 ```
 
 ## Platform API

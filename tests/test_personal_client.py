@@ -147,6 +147,50 @@ def test_get_transactions_serializes_filters_and_parses_dates() -> None:
     assert response.transactions[0].is_pending is False
 
 
+def test_transactions_response_converts_to_dataframe() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "transactions": [
+                    {
+                        "id": "txn_1",
+                        "accountId": 123,
+                        "amount": -12.5,
+                        "currency": "EUR",
+                        "date": "2026-06-26",
+                        "merchant": "Cafe",
+                        "description": "Lunch",
+                        "isPending": False,
+                    }
+                ],
+                "total": 1,
+            },
+        )
+
+    client = LunchFlowClient(
+        api_key="test-key",
+        base_url="https://api.test/v1/",
+        transport=httpx.MockTransport(handler),
+    )
+    response = client.get_transactions("123")
+
+    dataframe = response.to_dataframe()
+
+    assert dataframe.to_dict("records") == [
+        {
+            "id": "txn_1",
+            "accountId": 123,
+            "amount": -12.5,
+            "currency": "EUR",
+            "date": "2026-06-26",
+            "merchant": "Cafe",
+            "description": "Lunch",
+            "isPending": False,
+        }
+    ]
+
+
 def test_non_success_response_raises_api_error() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(

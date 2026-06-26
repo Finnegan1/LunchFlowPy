@@ -3,7 +3,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import date
-from typing import TypeAlias
+from typing import TYPE_CHECKING, TypeAlias
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 JsonValue: TypeAlias = (
     str | int | float | bool | None | list["JsonValue"] | dict[str, "JsonValue"]
@@ -94,6 +97,11 @@ class TransactionsResponse:
             total=_int(data, "total"),
             raw=dict(data),
         )
+
+    def to_dataframe(self) -> pd.DataFrame:
+        import pandas as pd
+
+        return pd.DataFrame([transaction.raw for transaction in self.transactions])
 
 
 @dataclass(frozen=True, slots=True)
