@@ -16,7 +16,7 @@ from lunchflow._models import (
 class LunchFlowClient(BaseClient):
     """Client for the Lunch Flow Personal API."""
 
-    DEFAULT_BASE_URL = "https://lunchflow.app/api/v1"
+    DEFAULT_BASE_URL = "https://www.lunchflow.app/api/v1"
 
     def __init__(
         self,

@@ -49,6 +49,56 @@ def test_list_accounts_sends_api_key_and_returns_typed_accounts() -> None:
     assert response.accounts[0].name == "Checking"
 
 
+def test_default_base_url_uses_canonical_www_host() -> None:
+    seen_request: httpx.Request | None = None
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal seen_request
+        seen_request = request
+        return httpx.Response(200, json={"accounts": [], "total": 0})
+
+    client = LunchFlowClient(
+        api_key="test-key",
+        transport=httpx.MockTransport(handler),
+    )
+
+    client.list_accounts()
+
+    assert seen_request is not None
+    assert str(seen_request.url) == "https://www.lunchflow.app/api/v1/accounts"
+
+
+def test_list_accounts_allows_missing_currency() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "accounts": [
+                    {
+                        "id": 123,
+                        "name": "Checking",
+                        "institution_name": "Demo Bank",
+                        "institution_logo": "https://example.com/logo.png",
+                        "provider": "gocardless",
+                        "status": "ACTIVE",
+                    }
+                ],
+                "total": 1,
+            },
+        )
+
+    client = LunchFlowClient(
+        api_key="test-key",
+        base_url="https://api.test/v1",
+        transport=httpx.MockTransport(handler),
+    )
+
+    response = client.list_accounts()
+
+    assert response.accounts[0].currency is None
+    assert "currency" not in response.accounts[0].raw
+
+
 def test_get_transactions_serializes_filters_and_parses_dates() -> None:
     seen_request: httpx.Request | None = None
 

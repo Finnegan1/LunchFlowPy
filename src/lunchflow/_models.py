@@ -19,7 +19,7 @@ class Account:
     institution_name: str
     institution_logo: str | None
     provider: str
-    currency: str
+    currency: str | None
     status: str
     raw: JsonObject
 
@@ -31,7 +31,7 @@ class Account:
             institution_name=_str(data, "institution_name"),
             institution_logo=_optional_str(data, "institution_logo"),
             provider=_str(data, "provider"),
-            currency=_str(data, "currency"),
+            currency=_optional_str(data, "currency"),
             status=_str(data, "status"),
             raw=dict(data),
         )
